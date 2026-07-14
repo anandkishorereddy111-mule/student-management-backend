@@ -5,7 +5,7 @@ import com.students.service.SheetsService;
 import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/students")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:5173","https://student-management-frontend-two-mu.vercel.app")
 public class StudentController {
 
     private final SheetsService sheetsService;
