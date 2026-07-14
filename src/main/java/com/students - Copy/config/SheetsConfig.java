@@ -8,8 +8,10 @@ import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 @Configuration
@@ -17,8 +19,16 @@ public class SheetsConfig {
 
     @Bean
     public Sheets googleSheetsClient() throws Exception {
+        String credentialsJson = System.getenv("GOOGLE_SHEETS_CREDENTIALS");
+        if (credentialsJson == null || credentialsJson.isBlank()) {
+            throw new IllegalStateException("GOOGLE_SHEETS_CREDENTIALS environment variable is not set");
+        }
+
+        InputStream credentialsStream = new ByteArrayInputStream(
+                credentialsJson.getBytes(StandardCharsets.UTF_8));
+
         GoogleCredentials credentials = GoogleCredentials
-                .fromStream(new ClassPathResource("service-account-key.json").getInputStream())
+                .fromStream(credentialsStream)
                 .createScoped(Collections.singletonList(SheetsScopes.SPREADSHEETS));
 
         return new Sheets.Builder(
